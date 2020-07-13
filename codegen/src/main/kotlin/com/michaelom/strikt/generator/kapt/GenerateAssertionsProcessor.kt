@@ -55,23 +55,9 @@ class GenerateAssertionsProcessor : AbstractProcessor() {
         }
 
         val assertionTypes = assertionCandidates.asSequence()
-            .mapNotNull {
-                when (it) {
-                    is TypeElement -> it
-                    else -> {
-                        messager.errorMessage("@GenerateAssertions can't be applied to $it: must be a Kotlin data class")
-                        null
-                    }
-                }
-            }
-            .filter { typeElement ->
-                val kmClass = typeElement.toImmutableKmClass()
-                //TODO define criteria
-                if (!kmClass.isData || kmClass.isPrivate) {
-                    messager.errorMessage("@GenerateAssertions can't be applied to $typeElement: must be a Kotlin data class")
-                }
-                true
-            }.toSet()
+            .filter { qualifiesForProcessing(it) }
+            .map { it as TypeElement }
+            .toSet()
 
         val assertionTypeNames = assertionTypes.map { element -> element.toImmutableKmClass().name }.toSet()
 
@@ -93,6 +79,20 @@ class GenerateAssertionsProcessor : AbstractProcessor() {
             it.writeTo(targetDir)
             messager.noteMessage("Generated ${targetDir.resolve("${it.name}.kt")}")
         }
+    }
+
+    private fun qualifiesForProcessing(element: Element): Boolean {
+        if (element !is TypeElement) {
+            messager.errorMessage("@GenerateAssertions can't be applied to $element: must be a Kotlin data class")
+            return false
+        }
+
+        val kmClass = element.toImmutableKmClass()
+        //TODO define criteria for classes
+        if (!kmClass.isData || kmClass.isPrivate) {
+            messager.errorMessage("@GenerateAssertions can't be applied to $element: must be a Kotlin data class")
+        }
+        return true
     }
 }
 
