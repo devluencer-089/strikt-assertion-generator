@@ -38,7 +38,6 @@ fun KotlinCompilation.Result.assertionFiles(): List<File> {
     return files
 }
 
-//TODO annotate entire module or package
 @KotlinPoetMetadataPreview
 fun KotlinCompilation.Result.assertionFile(name: String? = null): File? {
     val files = assertionFiles().filter { file -> name?.let { file.name == it } ?: true }
