@@ -1,0 +1,91 @@
+plugins {
+    id 'jacoco'}
+
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'org.jetbrains.kotlin.kapt'
+apply plugin: 'de.jansauer.printcoverage'
+
+dependencies {
+
+    compileOnly group: 'com.google.auto.service', name: 'auto-service-annotations', version: '1.0-rc6'
+    kapt group: 'com.google.auto.service', name: 'auto-service', version: '1.0-rc6'
+
+    compileOnly group: 'net.ltgt.gradle.incap', name: 'incap', version: incap_version
+    kapt group: 'net.ltgt.gradle.incap', name: 'incap-processor', version: incap_version
+
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
+    implementation group: 'com.squareup', name: 'kotlinpoet', version: kotlin_poet_version
+    implementation group: 'com.squareup', name: 'kotlinpoet-metadata', version: kotlin_poet_version
+    implementation group: 'com.squareup', name: 'kotlinpoet-metadata-specs', version: kotlin_poet_version
+    implementation group: 'com.squareup', name: 'kotlinpoet-classinspector-elements', version: kotlin_poet_version
+
+
+
+    implementation project(':annotation')
+    testImplementation group: 'com.github.tschuchortdev', name: 'kotlin-compile-testing', version: compile_testing_version
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junit_version
+
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spek_version") {
+        exclude group: 'org.jetbrains.kotlin'
+    }
+
+    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spek_version") {
+        exclude group: 'org.junit.platform'
+        exclude group: 'org.jetbrains.kotlin'
+    }
+
+    testRuntimeOnly group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
+    testImplementation group: 'io.strikt', name: 'strikt-core', version: strikt_version
+}
+
+jacoco {
+    toolVersion = "0.8.3"
+}
+
+//we copy all test source files into the resource directory in order to read the source code during testing
+task copyTestSources(type: Copy) {
+    from 'src/test/kotlin/com/michaelom/strikt/generator/kapt/sources'
+    rename { String filename -> filename + '.txt' }
+    into 'src/test/resources/sources'
+}
+
+test.dependsOn(copyTestSources)
+
+
+test {
+    useJUnitPlatform {
+        includeEngines 'spek2'
+    }
+
+    systemProperty 'vertx.disableFileCaching', true
+
+    jacoco {
+        destinationFile = file("${buildDir}/jacoco/test.exec")
+    }
+
+    minHeapSize = "512m"
+    maxHeapSize = "2048m"
+
+    jvmArgs '-XX:+UseG1GC'
+
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat "full"
+        events "passed", "skipped", "failed"
+
+    }
+}
+
+jacocoTestReport {
+    // Adjust the output of the test report
+    reports {
+        xml.enabled true
+        csv.enabled false
+    }
+}
+
+jacocoTestReport.finalizedBy(printCoverage)
+
+test.finalizedBy(jacocoTestReport)

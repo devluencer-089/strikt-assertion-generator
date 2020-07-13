@@ -1,0 +1,5 @@
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
+dependencies {
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
+}

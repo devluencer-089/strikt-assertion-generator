@@ -1,0 +1,5 @@
+rootProject.name = 'strikt-assertions-generator'
+
+include 'codegen'
+include 'annotation'
+include 'example'
