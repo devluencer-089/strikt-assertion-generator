@@ -1,14 +1,4 @@
 buildscript {
-    ext {
-        kotlin_version = '1.3.72'
-        kotlin_poet_version = '1.6.0'
-        incap_version = '0.3'
-        spek_version = '2.0.12'
-        junit_version = '5.6.2'
-        strikt_version = '0.26.1'
-        compile_testing_version = '1.2.9'
-    }
-
     repositories {
         mavenCentral()
         jcenter()
@@ -33,6 +23,10 @@ subprojects { project ->
             jvmTarget = "1.8"
         }
     }
+}
+
+tasks.register('publishPluginLocally') {
+    dependsOn gradle.includedBuild('plugin').task(':publishToMavenLocal')
 }
 
 dependencyUpdates {
