@@ -2,10 +2,12 @@ rootProject.name = 'strikt-assertions-generator'
 
 include 'annotation'
 include 'codegen'
-include 'plugin'
-include 'example'
+include 'examples'
+
 
 project(':annotation').name  = 'assertion-generator-annotation'
 project(':codegen').name  = 'assertion-generator'
-project(':plugin').name  = 'assertion-generator-plugin'
-project(':example').name  = 'assertion-generator-examples'
+project(':examples').name  = 'assertion-generator-examples'
+
+
+includeBuild('plugin')
