@@ -1,0 +1,9 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'com.michaelom.strikt.assertion-generator'
+}
+
+dependencies {
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.3.72'
+
+}
