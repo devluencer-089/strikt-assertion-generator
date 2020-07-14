@@ -27,3 +27,6 @@ build/
 .classpath
 .vscode
 **/bin/**
+
+#generated code
+/codegen/src/test/resources/sources/
