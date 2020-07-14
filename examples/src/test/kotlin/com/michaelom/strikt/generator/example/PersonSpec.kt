@@ -36,35 +36,23 @@ class PersonSpec : Spek({
 
         it("generates lazy assertions") {
             expectThat(person) {
-                name.isEqualTo("Hans")
-                sex.isOneOf(Male, Nonbinary)
-                size.isEqualTo(183)
-                dateOfBirth.isEqualTo(date)
-                car {
-                    make.isEqualTo("Fiat")
-                    year.isEqualTo(1999)
-                }
-                child {
-                    name.isEqualTo("Linda")
-                    sex.isEqualTo(Female)
-                    size.isEqualTo(170)
-                    child {
-                        name.isEqualTo("Marie")
-                        sex.isEqualTo(Female)
-                        size.isEqualTo(155)
-                    }
-                }
-            }
-        }
-
-        it("generates lazy assertions with infix notation") {
-            expectThat(person) {
                 name isEqualTo "Hans"
+                sex isEqualTo Male
                 size isEqualTo 183
-                this.dateOfBirth isEqualTo date
+                dateOfBirth isEqualTo date
                 car {
                     make isEqualTo "Fiat"
                     year isEqualTo 1999
+                }
+                child {
+                    name isEqualTo "Linda"
+                    sex isEqualTo Female
+                    size isEqualTo 170
+                    child {
+                        name isEqualTo "Marie"
+                        sex isEqualTo Female
+                        size isEqualTo 155
+                    }
                 }
             }
         }
