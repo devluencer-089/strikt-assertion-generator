@@ -1,5 +1,6 @@
 plugins {
-    id 'jacoco'}
+    id 'jacoco'
+}
 
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'org.jetbrains.kotlin.kapt'
@@ -20,8 +21,7 @@ dependencies {
     implementation group: 'com.squareup', name: 'kotlinpoet-classinspector-elements', version: kotlin_poet_version
 
 
-
-    implementation project(':annotation')
+    implementation project(':assertion-generator-annotation')
     testImplementation group: 'com.github.tschuchortdev', name: 'kotlin-compile-testing', version: compile_testing_version
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version

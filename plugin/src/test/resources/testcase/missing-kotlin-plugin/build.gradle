@@ -1,0 +1,4 @@
+plugins {
+    id 'com.michaelom.strikt.assertion-generator'
+}
+
