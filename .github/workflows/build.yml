@@ -1,10 +1,6 @@
 name: CI
 
-on:
-  push:
-    # change to *
-    branches: [ master ]
-  pull_request: [ master ]
+on: [push, pull_request]
 
 env:
   GRADLE_HOME: ${{ github.workspace }}/gradle-home
