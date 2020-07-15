@@ -116,6 +116,29 @@ If you now navigate to `${build}/generated/source/kaptKotlin/strikt` you will fi
 for your annotated data classes.
 
 
+### Setting up kapt in your IDE
+When creating or changing annotated classes the IDE can automatically trigger `kapt` to (re)generate
+assertions.
+//TODO explain + screenshots    
+
+
+### FAQ
+##### Why do I need a gradle plugin and what does it do?
+Assertions are test sources generated from production resources. 
+Gradle and IDEs (like IntelliJ/Android Studio) do not recognize them automatically, so when test resources are 
+processed and compiled the generated assertions are omitted.
+The plugin adds the directory with the generated resources to the test compile classpath.
+
+If you refer not to use a gradle plugin, you can instead modify your `build.gradle` file to include 
+the generated assertions on the test classpath:
+
+```groovy
+afterEvaluate { Project evaluatedProject ->
+    File kaptSourcesDir = evaluatedProject.tasks.findByName("kaptKotlin").kotlinSourcesDestinationDir
+    File generatedAssertionsDir = kaptSourcesDir.toPath().parent.resolve("strikt").toFile()
+    sourceSets.test.kotlin.srcDirs += generatedAssertionsDir
+}
+```
 
 
 ## Contributing
