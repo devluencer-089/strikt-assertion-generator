@@ -113,6 +113,27 @@ object GenerateAssertionsProcessorSpec : Spek({
                     .isNotNull()
                     .equalsLineByLine(expected)
             }
+
+            it("treats nested classes as top level classes") {
+                val compilation = compileSources("NestedClass.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                @Language("kotlin")
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+                  
+                    import kotlin.String
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                  
+                    val Assertion.Builder<TopLevel.Nested>.property: Assertion.Builder<String>
+                      get() = get("property", Nested::property)
+                """.trimIndent()
+
+                expectThat(compilation.assertionFile("NestedAssertions.kt"))
+                    .isNotNull()
+                    .equalsLineByLine(expected)
+            }
         }
 
         context("if the annotated type is not a data class") {
