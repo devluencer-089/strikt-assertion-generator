@@ -1,4 +1,5 @@
 ![CI](https://github.com/michaelom/strikt-assertion-generator/workflows/CI/badge.svg?event=push)
+[![codecov](https://codecov.io/gh/michaelom/strikt-assertion-generator/branch/master/graph/badge.svg)](https://codecov.io/gh/michaelom/strikt-assertion-generator)
 
 # strikt-assertion-generator
 Generate boilerplate-free [strikt](strikt.io) assertions for Kotlin data classes
