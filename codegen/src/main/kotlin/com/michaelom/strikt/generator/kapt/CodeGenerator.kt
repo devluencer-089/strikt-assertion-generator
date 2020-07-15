@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 
 @KotlinPoetMetadataPreview
 fun generateAssertions(descriptor: ClassDescriptor): FileSpec {
-    val assertionFileName = descriptor.simpleName + "Assertions"
+    val assertionFileName = descriptor.qualifiedName + "Assertions"
     val file = FileSpec.builder(descriptor.pkgName, assertionFileName)
 
     descriptor.members
@@ -60,7 +60,7 @@ private fun ClassDescriptor.Member.toPropertyAssertion(classDescriptor: ClassDes
         .getter(
             FunSpec
                 .getterBuilder()
-                .addCode("return get(\"${name}\", ${classDescriptor.simpleName}::$name)")
+                .addCode("return get(\"${name}\", ${classDescriptor.qualifiedName}::$name)")
                 .build())
         .build()
 }

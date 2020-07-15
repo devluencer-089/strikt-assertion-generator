@@ -3,6 +3,7 @@ package com.michaelom.strikt.generator.kapt
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.tschuchort.compiletesting.*
 import java.io.File
+import java.nio.file.Paths
 
 @KotlinPoetMetadataPreview
 fun readSource(name: String): SourceFile {

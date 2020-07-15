@@ -8,7 +8,7 @@ import java.time.Instant.now
 
 class PersonSpec : Spek({
 
-    describe("generated assertions") {
+    describe("generated assertions for Person.kt") {
 
         val car = Car(make = "Fiat", year = 1999)
         val date = now()

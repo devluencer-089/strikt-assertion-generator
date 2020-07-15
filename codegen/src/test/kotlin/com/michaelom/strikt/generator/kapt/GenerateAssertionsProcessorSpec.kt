@@ -8,6 +8,7 @@ import org.spekframework.spek2.style.specification.describe
 import strikt.api.*
 import strikt.assertions.*
 import java.io.File
+import java.nio.file.Paths
 
 @KotlinPoetMetadataPreview
 object GenerateAssertionsProcessorSpec : Spek({
@@ -127,12 +128,35 @@ object GenerateAssertionsProcessorSpec : Spek({
                     import strikt.api.Assertion.Builder
                   
                     val Assertion.Builder<TopLevel.Nested>.property: Assertion.Builder<String>
-                      get() = get("property", Nested::property)
+                      get() = get("property", TopLevel.Nested::property)
                 """.trimIndent()
 
-                expectThat(compilation.assertionFile("NestedAssertions.kt"))
+                expectThat(compilation.assertionFile("TopLevel.NestedAssertions.kt"))
                     .isNotNull()
                     .equalsLineByLine(expected)
+            }
+
+            it("creates one assertion file for each top level class") {
+                val compilation = compileSources("MultipleTopLevelClasses.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                @Language("kotlin")
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+                  
+                    import kotlin.String
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                  
+                    val Assertion.Builder<TopLevel.Nested>.property: Assertion.Builder<String>
+                      get() = get("property", TopLevel.Nested::property)
+                """.trimIndent()
+
+                val assertionFiles = compilation.assertionFiles()
+                expectThat(assertionFiles)
+                    .hasSize(3)
+                    .map { it.name }
+                    .containsExactlyInAnyOrder("AAssertions.kt", "BAssertions.kt", "CAssertions.kt")
             }
         }
 
@@ -179,5 +203,5 @@ object GenerateAssertionsProcessorSpec : Spek({
 })
 
 private fun Assertion.Builder<File>.equalsLineByLine(expected: String): Assertion.Builder<List<String>> {
-    return get { readText().lines() }.isEqualTo(expected.lines())
+    return lines().isEqualTo(expected.lines())
 }

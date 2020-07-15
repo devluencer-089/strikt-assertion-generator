@@ -23,8 +23,15 @@ class ClassDescriptor(
     val pkgName: String
         get() = className.packageName
 
-    val simpleName: String
-        get() = className.simpleName
+//    private val simpleName: String
+//        get() = className.simpleName
+//
+//    private val canonicalName: String
+//        get() = className.canonicalName
+
+    // qualifiedName = enclosing class name(s) + simpleName
+    val qualifiedName: String
+        get() = className.simpleNames.joinToString(separator = ".")
 
     val className: ClassName
         get() = containerData.className
