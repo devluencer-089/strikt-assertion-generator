@@ -34,24 +34,61 @@ class PersonSpec : Spek({
             )
         )
 
-        it("generates lazy assertions") {
-            expectThat(person) {
-                name isEqualTo "Hans"
-                sex isEqualTo Male
-                size isEqualTo 183
-                dateOfBirth isEqualTo date
-                car {
-                    make isEqualTo "Fiat"
-                    year isEqualTo 1999
+        context("without generated assertions") {
+
+            it("looks noisy") {
+                expectThat(person) {
+                    get { name } isEqualTo "Hans"
+                    get { sex } isEqualTo Male
+                    get { size } isEqualTo 183
+                    get { dateOfBirth } isEqualTo date
+
+                    with(Person::car) {
+                        get { make } isEqualTo "Fiat"
+                        get { year } isEqualTo 1999
+                    }
+
+                    with(Person::child) {
+                        isNotNull().and {
+                            get { name } isEqualTo "Linda"
+                            get { sex } isEqualTo Female
+                            get { size } isEqualTo 170
+
+                            with(Person::child) {
+                                isNotNull().and {
+                                    get { name } isEqualTo "Marie"
+                                    get { sex } isEqualTo Female
+                                    get { size } isEqualTo 155
+                                }
+                            }
+
+                        }
+                    }
                 }
-                child {
-                    name isEqualTo "Linda"
-                    sex isEqualTo Female
-                    size isEqualTo 170
+            }
+        }
+
+        context("with generated assertions") {
+
+            it("looks beautiful") {
+                expectThat(person) {
+                    name isEqualTo "Hans"
+                    sex isEqualTo Male
+                    size isEqualTo 183
+                    dateOfBirth isEqualTo date
+                    car {
+                        make isEqualTo "Fiat"
+                        year isEqualTo 1999
+                    }
                     child {
-                        name isEqualTo "Marie"
+                        name isEqualTo "Linda"
                         sex isEqualTo Female
-                        size isEqualTo 155
+                        size isEqualTo 170
+                        child {
+                            name isEqualTo "Marie"
+                            sex isEqualTo Female
+                            size isEqualTo 155
+                        }
                     }
                 }
             }

@@ -8,7 +8,6 @@ import org.spekframework.spek2.style.specification.describe
 import strikt.api.*
 import strikt.assertions.*
 import java.io.File
-import java.nio.file.Paths
 
 @KotlinPoetMetadataPreview
 object GenerateAssertionsProcessorSpec : Spek({
@@ -81,7 +80,7 @@ object GenerateAssertionsProcessorSpec : Spek({
                     val Assertion.Builder<Person>.car: Assertion.Builder<Car>
                       get() = get("car", Person::car)
                     fun Assertion.Builder<Person>.car(block: Assertion.Builder<Car>.() -> Unit):
-                        Assertion.Builder<Person> = with(function = { this.car }, block = block)
+                        Assertion.Builder<Person> = with(function = Person::car, block = block)
                     
                     val Assertion.Builder<Person>.name: Assertion.Builder<String>
                       get() = get("name", Person::name)
@@ -90,6 +89,31 @@ object GenerateAssertionsProcessorSpec : Spek({
                 """.trimIndent()
 
                 expectThat(compilation.assertionFile("PersonAssertions.kt"))
+                    .isNotNull()
+                    .equalsLineByLine(expected)
+            }
+
+            it("generates assertions for nullable nested properties") {
+                val compilation = compileSources("PersonWithNullableCar.kt", "Car.kt", "Sex.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                @Language("kotlin")
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+
+                    import kotlin.Unit
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                    import strikt.assertions.isNotNull
+                    
+                    val Assertion.Builder<PersonWithNullableCar>.car: Assertion.Builder<Car?>
+                      get() = get("car", PersonWithNullableCar::car)
+                    fun Assertion.Builder<PersonWithNullableCar>.car(block: Assertion.Builder<Car>.() -> Unit):
+                        Assertion.Builder<PersonWithNullableCar> = with(PersonWithNullableCar::car) {
+                        isNotNull().and(block) }
+                """.trimIndent()
+
+                expectThat(compilation.assertionFile("PersonWithNullableCarAssertions.kt"))
                     .isNotNull()
                     .equalsLineByLine(expected)
             }

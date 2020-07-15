@@ -44,9 +44,12 @@ private fun ClassDescriptor.Member.toNestedAssertion(classDescriptor: ClassDescr
         .returns(assertionBuilderOf(classDescriptor.className))
         .addStatement(
             if (isNullable()) {
-                "return ${name}.isNotNull().and(block)"
+//                with(Person::child) {
+//                    isNotNull().and(block)
+//                }
+                "return with(${classDescriptor.qualifiedName}::$name) { isNotNull().and(block) }"
             } else {
-                "return with(function = { this.${name} }, block = block)"
+                "return with(function = ${classDescriptor.qualifiedName}::$name, block = block)"
             }
         )
         .build()
