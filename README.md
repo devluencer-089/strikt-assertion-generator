@@ -90,8 +90,8 @@ Voila! All the boilerplate around `get`, `with` and `isNotNull` is gone.
 #### 1. add dependencies to `build.gradle` 
 ```groovy
 dependencies {
-    compileOnly 'com.michaelom.strikt.assertion-generator-annotation:{version}'
-    kapt 'com.michaelom.strikt.assertion-generator:{version}'
+    compileOnly "com.michaelom.strikt.assertion-generator-annotation:$version"
+    kapt "com.michaelom.strikt.assertion-generator:$version"
 }
 ```
 #### 2. add gradle plugin to `build.gradle`
