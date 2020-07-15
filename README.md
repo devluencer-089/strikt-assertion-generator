@@ -1,9 +1,5 @@
 # strikt-assertion-generator
-Generate boilerplate free [strikt](strikt.io) assertions for Kotlin data classes
-
-### Strikt Assertion Generator
-This library generates strikt assertions for Kotlin data classes at compile time.  
-
+Generate boilerplate-free [strikt](strikt.io) assertions for Kotlin data classes
 
 ### Why would I need generated assertions?
 Consider the following Kotlin data class:
