@@ -164,18 +164,6 @@ object GenerateAssertionsProcessorSpec : Spek({
                 val compilation = compileSources("MultipleTopLevelClasses.kt")
                 expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
 
-                @Language("kotlin")
-                val expected = """
-                    package com.michaelom.strikt.generator.kapt.sources
-                  
-                    import kotlin.String
-                    import strikt.api.Assertion
-                    import strikt.api.Assertion.Builder
-                  
-                    val Assertion.Builder<TopLevel.Nested>.property: Assertion.Builder<String>
-                      get() = get("property", TopLevel.Nested::property)
-                """.trimIndent()
-
                 val assertionFiles = compilation.assertionFiles()
                 expectThat(assertionFiles)
                     .hasSize(3)
