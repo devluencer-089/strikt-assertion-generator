@@ -18,9 +18,7 @@ data class Person(
 A typical test asserting on instances of `Person` might look like this:
 
 ```kotlin
-    val person = Person(...)
-
-    sut.doSomething(person)    
+    val person = sut.doSomething(person)    
 
     expectThat(person) {
         get { name } isEqualTo "Hans"
@@ -59,9 +57,7 @@ It needs some practice to write proper assertions particularly around nested and
 Using Strikt Assertion Generator, it is possible to generate assertions specific to `Person`. The same test can be rewritten like this:
 
 ```kotlin
-    val person = Person(...)
-    
-    sut.doSomething(person) 
+    val person = sut.doSomething(person)
     
     expectThat(person) {
         name isEqualTo "Hans"
