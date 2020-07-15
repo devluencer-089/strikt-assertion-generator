@@ -92,6 +92,27 @@ object GenerateAssertionsProcessorSpec : Spek({
                     .isNotNull()
                     .equalsLineByLine(expected)
             }
+
+            it("skips private properties") {
+                val compilation = compileSources("TypeWithPrivateProperties.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                @Language("kotlin")
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+                  
+                    import kotlin.String
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                  
+                    val Assertion.Builder<TypeWithPrivateProperties>.public: Assertion.Builder<String>
+                      get() = get("public", TypeWithPrivateProperties::public)
+                """.trimIndent()
+
+                expectThat(compilation.assertionFile("TypeWithPrivatePropertiesAssertions.kt"))
+                    .isNotNull()
+                    .equalsLineByLine(expected)
+            }
         }
     }
 

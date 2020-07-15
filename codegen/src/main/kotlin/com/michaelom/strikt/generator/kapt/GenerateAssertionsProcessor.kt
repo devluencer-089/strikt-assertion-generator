@@ -9,13 +9,14 @@ import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
 import com.squareup.kotlinpoet.metadata.*
 import com.squareup.kotlinpoet.metadata.specs.*
 import net.ltgt.gradle.incap.*
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING
 import java.nio.file.*
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
 
 @AutoService(Processor::class)
-@IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
+@IncrementalAnnotationProcessor(ISOLATING)
 @KotlinPoetMetadataPreview
 class GenerateAssertionsProcessor : AbstractProcessor() {
     companion object {
