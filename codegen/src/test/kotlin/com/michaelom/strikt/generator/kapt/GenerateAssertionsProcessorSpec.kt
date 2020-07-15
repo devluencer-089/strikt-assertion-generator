@@ -64,7 +64,7 @@ object GenerateAssertionsProcessorSpec : Spek({
                     .equalsLineByLine(expected)
             }
 
-            it("generated nested assertions") {
+            it("generates assertions for nested properties") {
                 val compilation = compileSources("Person.kt", "Car.kt", "Sex.kt")
                 expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
 
