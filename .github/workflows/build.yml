@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     # change to *
-    branches: [ ci ]
+    branches: [ master ]
   pull_request: [ master ]
 
 env:
