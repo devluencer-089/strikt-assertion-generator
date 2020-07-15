@@ -117,7 +117,7 @@ object GenerateAssertionsProcessorSpec : Spek({
 
         context("if the annotated type is not a data class") {
 
-            listOf("NormalClass", "Interface", "AbstractClass").forEach { name ->
+            listOf("NormalClass", "Interface", "AbstractClass", "PrivateClass").forEach { name ->
 
                 it("does not generate assertions for '$name'") {
                     val compilation = compileSources("NotSupported_$name.kt")
