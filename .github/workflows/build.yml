@@ -80,9 +80,9 @@ jobs:
         run: ./gradlew check --build-cache --no-daemon --stacktrace --gradle-user-home "$GRADLE_HOME"
 
       ## Publish code coverage
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v1.1.1
+      - name: Codecov
+        uses: codecov/codecov-action@v1.0.10
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: "./codegen/build/reports/jacoco/test/jacocoTestReport.xml"
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./codegen/build/reports/jacoco/test/jacocoTestReport.xml
 
