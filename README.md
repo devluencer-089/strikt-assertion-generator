@@ -129,7 +129,7 @@ Gradle and IDEs (like IntelliJ/Android Studio) do not recognize them automatical
 processed and compiled the generated assertions are omitted.
 The plugin adds the directory with the generated resources to the test compile classpath.
 
-If you refer not to use a gradle plugin, you can instead modify your `build.gradle` file to include 
+If you prefer not to use a gradle plugin, you can instead modify your `build.gradle` file to include 
 the generated assertions on the test classpath:
 
 ```groovy
