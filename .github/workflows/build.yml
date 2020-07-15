@@ -78,3 +78,11 @@ jobs:
       ## Actual task
       - name: Check with Gradle
         run: ./gradlew check --build-cache --no-daemon --stacktrace --gradle-user-home "$GRADLE_HOME"
+
+      ## Publish code coverage
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./codegen/build/reports/jacoco/test/jacocoTestReport.xml
+

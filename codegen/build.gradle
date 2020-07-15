@@ -1,3 +1,7 @@
+plugins {
+    id 'jacoco'
+}
+
 dependencies {
 
     compileOnly group: 'com.google.auto.service', name: 'auto-service-annotations', version: '1.0-rc6'
@@ -29,4 +33,18 @@ clean {
 
 test {
     dependsOn 'copyTestSources'
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.enabled false
+        xml.enabled true
+        csv.enabled false
+    }
 }
