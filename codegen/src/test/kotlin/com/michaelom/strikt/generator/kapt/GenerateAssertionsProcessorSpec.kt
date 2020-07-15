@@ -14,7 +14,7 @@ object GenerateAssertionsProcessorSpec : Spek({
 
     describe("assertion generation") {
 
-        context("with data classes") {
+        context("if the annotated type is a data class") {
 
             it("generates assertions for simple types [Int, String]") {
                 val compilation = compileSources("Car.kt")
@@ -41,7 +41,7 @@ object GenerateAssertionsProcessorSpec : Spek({
             }
 
             it("generates assertions for optional types") {
-                val compilation = compileSources("CarWithOptionalMake.kt")
+                val compilation = compileSources("CarWithOptionalYear.kt")
                 expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
 
                 @Language("kotlin")
@@ -114,10 +114,48 @@ object GenerateAssertionsProcessorSpec : Spek({
                     .equalsLineByLine(expected)
             }
         }
+
+        context("if the annotated type is not a data class") {
+
+            listOf("NormalClass", "Interface", "AbstractClass").forEach { name ->
+
+                it("does not generate assertions for '$name'") {
+                    val compilation = compileSources("NotSupported_$name.kt")
+
+                    expectThat(compilation.exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+                    expectThat(compilation.messages)
+                        .contains("@GenerateAssertions can't be applied to " +
+                            "com.michaelom.strikt.generator.kapt.sources.NotSupported_$name: must be a Kotlin data class")
+                }
+            }
+        }
+
+        context("when the annotated data class has supertypes") {
+
+            it("ignores properties on supertypes") {
+                val compilation = compileSources("TypeWithSuperTypes.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                @Language("kotlin")
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+                    
+                    import kotlin.Int
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                    
+                    val Assertion.Builder<TypeWithSuperTypes>.someInt: Assertion.Builder<Int>
+                      get() = get("someInt", TypeWithSuperTypes::someInt)
+                """.trimIndent()
+
+                expectThat(compilation.assertionFile("TypeWithSuperTypesAssertions.kt"))
+                    .isNotNull()
+                    .equalsLineByLine(expected)
+            }
+        }
     }
 
 })
-
 
 private fun Assertion.Builder<File>.equalsLineByLine(expected: String): Assertion.Builder<List<String>> {
     return get { readText().lines() }.isEqualTo(expected.lines())
