@@ -89,10 +89,16 @@ class GenerateAssertionsProcessor : AbstractProcessor() {
         }
 
         val kmClass = element.toImmutableKmClass()
-        //TODO define criteria for classes
-        if (!kmClass.isData || kmClass.isPrivate) {
+
+        if (!kmClass.isData) {
             messager.errorMessage("@GenerateAssertions can't be applied to $element: must be a Kotlin data class")
+            return false
         }
+        if (kmClass.isPrivate) {
+            messager.errorMessage("Error processing $element: @GenerateAssertions can't be applied to private classes")
+            return false
+        }
+
         return true
     }
 }

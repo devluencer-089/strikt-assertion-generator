@@ -3,7 +3,6 @@ package com.michaelom.strikt.generator.kapt
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.tschuchort.compiletesting.*
 import java.io.File
-import java.nio.file.Paths
 
 @KotlinPoetMetadataPreview
 fun readSource(name: String): SourceFile {
@@ -17,26 +16,20 @@ fun compileSources(name: String, vararg more: String): KotlinCompilation.Result 
         sources = listOf(readSource(name)) + more.toList().map { readSource(it) }
         annotationProcessors = listOf(GenerateAssertionsProcessor())
         inheritClassPath = true
-//        reportOutputFiles = true
+        reportOutputFiles = true
         reportPerformance = false
-        messageOutputStream = System.out
-//                verbose = false
+        verbose = false
         correctErrorTypes = true
-//                allWarningsAsErrors = true
+        allWarningsAsErrors = true
     }.compile()
 }
 
 @KotlinPoetMetadataPreview
 fun KotlinCompilation.Result.assertionFiles(): List<File> {
-    val files = File(outputDirectory.parent)
+    return File(outputDirectory.parent)
         .resolve("kapt")
         .resolve(GenerateAssertionsProcessor.ASSERTION_DIR_NAME)
         .listFilesRecursively()
-
-    if (files.isEmpty()) {
-        throw AssertionError("No assertion files found.")
-    }
-    return files
 }
 
 @KotlinPoetMetadataPreview
@@ -49,7 +42,7 @@ fun KotlinCompilation.Result.assertionFile(name: String? = null): File? {
 }
 
 fun File.listFilesRecursively(): List<File> {
-    return listFiles().flatMap { file ->
+    return (listFiles() ?: emptyArray<File>()).flatMap { file ->
         if (file.isDirectory)
             file.listFilesRecursively()
         else
