@@ -152,6 +152,7 @@ afterEvaluate { Project evaluatedProject ->
 - support for sequences and collections
 - add support for different visibility modifiers
 - add more examples 
+- covariant return types
 
 #### Debugging the annotation processor:
 

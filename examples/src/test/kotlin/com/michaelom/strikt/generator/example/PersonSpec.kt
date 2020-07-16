@@ -1,4 +1,5 @@
-import com.michaelom.strikt.generator.example.*
+package com.michaelom.strikt.generator.example
+
 import com.michaelom.strikt.generator.example.Sex.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -6,7 +7,7 @@ import strikt.api.expectThat
 import strikt.assertions.*
 import java.time.Instant.now
 
-class PersonSpec : Spek({
+object PersonSpec : Spek({
 
     describe("generated assertions for Person.kt") {
 

@@ -1,9 +1,11 @@
 package com.michaelom.strikt.generator.kapt
 
-import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.metadata.*
 import com.squareup.kotlinpoet.metadata.specs.*
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+
 import kotlinx.metadata.KmClassifier
 
 @KotlinPoetMetadataPreview
@@ -39,21 +41,41 @@ class ClassDescriptor(
     @KotlinPoetMetadataPreview
     inner class Member(private val property: ImmutableKmProperty, private val data: PropertyData) {
 
+        val enclosingClass: ClassDescriptor
+            get() = this@ClassDescriptor
+
         val name: String
             get() = property.name
 
-        private val classifier: KmClassifier.Class
-            get() = property.returnType.classifier as KmClassifier.Class
+        val typeName: TypeName by lazy { typeNameOf(property.returnType) }
 
-        val className: ClassName
-            get() = ClassInspectorUtil.createClassName(classifier.name)
+        private val returnTypeName: String
+            get() = (property.returnType.classifier as KmClassifier.Class).name
 
         fun isNullable(): Boolean {
             return property.returnType.isNullable
         }
 
         fun isItselfAGeneratedAssertionType(): Boolean {
-            return assertionCandidates.contains(classifier.name)
+            return assertionCandidates.contains(returnTypeName)
+        }
+
+        @KotlinPoetMetadataPreview
+        private fun typeNameOf(type: ImmutableKmType): TypeName {
+            val name = (type.classifier as KmClassifier.Class).name
+            val className = name.bestGuessClassName(type.isNullable)
+            if (type.arguments.isEmpty()) {
+                return className
+            }
+
+            val parameterClassNames = type.arguments.map { arg -> typeNameOf(arg.type!!) }
+            return className.parameterizedBy(parameterClassNames)
         }
     }
+}
+
+@KotlinPoetMetadataPreview
+private fun String.bestGuessClassName(nullable: Boolean): ClassName {
+    val className = ClassInspectorUtil.createClassName(this)
+    return if (nullable) className.toNullable() else className
 }

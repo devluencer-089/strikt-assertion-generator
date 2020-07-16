@@ -1,11 +1,12 @@
-import com.michaelom.strikt.generator.example.*
+package com.michaelom.strikt.generator.example
+
 import com.michaelom.strikt.generator.example.Expr.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
-class ExpressionSpec : Spek({
+object ExpressionSpec : Spek({
 
     describe("generated assertions for Expression.kt") {
 

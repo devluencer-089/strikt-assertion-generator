@@ -11,9 +11,9 @@ fun generateAssertions(descriptor: ClassDescriptor): FileSpec {
 
     descriptor.members
         .forEach { member ->
-            file.addProperty(member.toPropertyAssertion(descriptor))
+            file.addProperty(member.toPropertyAssertion())
             if (member.isItselfAGeneratedAssertionType()) {
-                file.addFunction(member.toNestedAssertion(descriptor))
+                file.addFunction(member.toNestedAssertion())
                 if (member.isNullable()) {
                     file.addImport("strikt.assertions", "isNotNull")
                 }
@@ -34,59 +34,38 @@ return child.isNotNull().and(block)
 }
 ```
  */
-
 @KotlinPoetMetadataPreview
-private fun ClassDescriptor.Member.toNestedAssertion(classDescriptor: ClassDescriptor): FunSpec {
+private fun ClassDescriptor.Member.toNestedAssertion(): FunSpec {
     return FunSpec
         .builder(name)
-        .receiver(assertionBuilderOf(classDescriptor.className))
-        .addParameter("block", LambdaTypeName.get(assertionBuilderOf(className), emptyList(), UNIT))
-        .returns(assertionBuilderOf(classDescriptor.className))
+        .receiver(receiverType = assertionBuilderOf(enclosingClass.className))
+        .addParameter("block", LambdaTypeName.get(assertionBuilderOf(typeName.toNonNullable()), emptyList(), UNIT))
+        .returns(returnType = assertionBuilderOf(enclosingClass.className))
         .addStatement(
             if (isNullable()) {
-//                with(Person::child) {
-//                    isNotNull().and(block)
-//                }
-                "return with(${classDescriptor.qualifiedName}::$name) { isNotNull().and(block) }"
+                "return with(${enclosingClass.qualifiedName}::$name) { isNotNull().and(block) }"
             } else {
-                "return with(function = ${classDescriptor.qualifiedName}::$name, block = block)"
+                "return with(function = ${enclosingClass.qualifiedName}::$name, block = block)"
             }
         )
         .build()
 }
 
 @KotlinPoetMetadataPreview
-private fun ClassDescriptor.Member.toPropertyAssertion(classDescriptor: ClassDescriptor): PropertySpec {
+private fun ClassDescriptor.Member.toPropertyAssertion(): PropertySpec {
     return PropertySpec
-        .builder(name = name, type = assertionBuilderTypeName(this))
-        .receiver(receiverType = assertionBuilderOf(classDescriptor.className))
+        .builder(name = name, type = assertionBuilderOf(typeName))
+        .receiver(receiverType = assertionBuilderOf(enclosingClass.className))
         .getter(
             FunSpec
                 .getterBuilder()
-                .addCode("return get(\"${name}\", ${classDescriptor.qualifiedName}::$name)")
+                .addCode("return get(\"${name}\", ${enclosingClass.qualifiedName}::$name)")
                 .build())
         .build()
 }
 
-// `Assertion.Builder` without type parameter
-val assertionBuilder = ClassName("strikt.api", "Assertion.Builder")
-
 // `Assertion.Builder<Car>`
-fun assertionBuilderOf(clazz: ClassName): TypeName {
-    return assertionBuilder.parameterizedBy(clazz)
+fun assertionBuilderOf(type: TypeName): TypeName {
+    return ClassName("strikt.api", "Assertion.Builder").parameterizedBy(type)
 }
 
-@KotlinPoetMetadataPreview
-fun assertionBuilderTypeName(memberDescriptor: ClassDescriptor.Member): TypeName {
-    val propertyTypeClassName = memberDescriptor.className
-    val type = if (memberDescriptor.isNullable()) propertyTypeClassName.toNullable() else propertyTypeClassName
-    return assertionBuilder.parameterizedBy(type)
-}
-
-fun ClassName.toNullable(): ClassName {
-    return copy(
-        nullable = true,
-        annotations = annotations,
-        tags = tags
-    )
-}

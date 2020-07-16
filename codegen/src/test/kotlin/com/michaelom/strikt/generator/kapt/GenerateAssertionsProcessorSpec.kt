@@ -175,6 +175,7 @@ object GenerateAssertionsProcessorSpec : Spek({
                 val compilation = compileSources("CompanionProperties.kt")
                 expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
 
+                @Language("kotlin")
                 val expected = """
                     package com.michaelom.strikt.generator.kapt.sources
                     
@@ -190,6 +191,62 @@ object GenerateAssertionsProcessorSpec : Spek({
                     .isNotNull()
                     .equalsLineByLine(expected)
             }
+
+            it("supports iterables") {
+                val compilation = compileSources("Iterables.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                @Language("kotlin")
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+                    
+                    import kotlin.String
+                    import kotlin.collections.Collection
+                    import kotlin.collections.Iterable
+                    import kotlin.collections.List
+                    import kotlin.collections.Map
+                    import kotlin.collections.Set
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                    
+                    val Assertion.Builder<Iterables>.collection: Assertion.Builder<Collection<String>>
+                      get() = get("collection", Iterables::collection)
+                    val Assertion.Builder<Iterables>.iterable: Assertion.Builder<Iterable<String>>
+                      get() = get("iterable", Iterables::iterable)
+                    val Assertion.Builder<Iterables>.list: Assertion.Builder<List<String>>
+                      get() = get("list", Iterables::list)
+                    val Assertion.Builder<Iterables>.map: Assertion.Builder<Map<String, String>>
+                      get() = get("map", Iterables::map)
+                    val Assertion.Builder<Iterables>.set: Assertion.Builder<Set<String>>
+                      get() = get("set", Iterables::set)
+                """.trimIndent()
+
+                expectThat(compilation.assertionFile("IterablesAssertions.kt"))
+                    .isNotNull()
+                    .equalsLineByLine(expected)
+            }
+        }
+
+        it("supports sequences") {
+            val compilation = compileSources("Sequences.kt")
+            expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+            @Language("kotlin")
+            val expected = """
+                package com.michaelom.strikt.generator.kapt.sources
+
+                import kotlin.String
+                import kotlin.sequences.Sequence
+                import strikt.api.Assertion
+                import strikt.api.Assertion.Builder
+                
+                val Assertion.Builder<Sequences>.sequence: Assertion.Builder<Sequence<String>>
+                  get() = get("sequence", Sequences::sequence)
+                """.trimIndent()
+
+            expectThat(compilation.assertionFile("SequencesAssertions.kt"))
+                .isNotNull()
+                .equalsLineByLine(expected)
         }
 
         context("if the annotated type is not a data class") {
