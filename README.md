@@ -146,9 +146,11 @@ afterEvaluate { Project evaluatedProject ->
 
 
 ### TODO
+- write plugin readme
 - publish plugin
 - publish annotation processor and annotation
 - support for sequences and collections
+- add support for different visibility modifiers
 - add more examples 
 
 #### Debugging the annotation processor:
