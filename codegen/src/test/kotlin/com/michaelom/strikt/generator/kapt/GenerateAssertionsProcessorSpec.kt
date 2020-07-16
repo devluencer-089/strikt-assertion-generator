@@ -170,6 +170,26 @@ object GenerateAssertionsProcessorSpec : Spek({
                     .map { it.name }
                     .containsExactlyInAnyOrder("AAssertions.kt", "BAssertions.kt", "CAssertions.kt")
             }
+
+            it("ignores companion object properties") {
+                val compilation = compileSources("CompanionProperties.kt")
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+
+                val expected = """
+                    package com.michaelom.strikt.generator.kapt.sources
+                    
+                    import kotlin.String
+                    import strikt.api.Assertion
+                    import strikt.api.Assertion.Builder
+                    
+                    val Assertion.Builder<CompanionProperties>.property: Assertion.Builder<String>
+                      get() = get("property", CompanionProperties::property)
+                """.trimIndent()
+
+                expectThat(compilation.assertionFile("CompanionPropertiesAssertions.kt"))
+                    .isNotNull()
+                    .equalsLineByLine(expected)
+            }
         }
 
         context("if the annotated type is not a data class") {
@@ -186,7 +206,7 @@ object GenerateAssertionsProcessorSpec : Spek({
                 }
             }
 
-            it("does not generate assertions for companion objects") {
+            it("ignores companion objects") {
                 val compilation = compileSources("Companion.kt")
 
                 expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
