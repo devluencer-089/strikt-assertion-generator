@@ -28,15 +28,10 @@ fun compileSources(name: String, vararg more: String): KotlinCompilation.Result 
 
 @KotlinPoetMetadataPreview
 fun KotlinCompilation.Result.assertionFiles(): List<File> {
-    val files = File(outputDirectory.parent)
+    return File(outputDirectory.parent)
         .resolve("kapt")
         .resolve(GenerateAssertionsProcessor.ASSERTION_DIR_NAME)
         .listFilesRecursively()
-
-    if (files.isEmpty()) {
-        throw AssertionError("No assertion files found.")
-    }
-    return files
 }
 
 @KotlinPoetMetadataPreview
@@ -49,7 +44,7 @@ fun KotlinCompilation.Result.assertionFile(name: String? = null): File? {
 }
 
 fun File.listFilesRecursively(): List<File> {
-    return listFiles().flatMap { file ->
+    return (listFiles() ?: emptyArray<File>()).flatMap { file ->
         if (file.isDirectory)
             file.listFilesRecursively()
         else

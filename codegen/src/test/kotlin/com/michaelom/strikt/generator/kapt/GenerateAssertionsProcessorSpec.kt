@@ -174,16 +174,32 @@ object GenerateAssertionsProcessorSpec : Spek({
 
         context("if the annotated type is not a data class") {
 
-            listOf("NormalClass", "Interface", "AbstractClass", "PrivateClass").forEach { name ->
+            listOf("NormalClass", "Interface", "AbstractClass").forEach { name ->
 
                 it("does not generate assertions for '$name'") {
-                    val compilation = compileSources("NotSupported_$name.kt")
+                    val compilation = compileSources("$name.kt")
 
                     expectThat(compilation.exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
                     expectThat(compilation.messages)
                         .contains("@GenerateAssertions can't be applied to " +
-                            "com.michaelom.strikt.generator.kapt.sources.NotSupported_$name: must be a Kotlin data class")
+                            "com.michaelom.strikt.generator.kapt.sources.$name: must be a Kotlin data class")
                 }
+            }
+
+            it("does not generate assertions for companion objects") {
+                val compilation = compileSources("Companion.kt")
+
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.OK)
+                expectThat(compilation.assertionFiles()).isEmpty()
+            }
+
+            it("does not generate assertions for private classes") {
+                val compilation = compileSources("PrivateClass.kt")
+
+                expectThat(compilation.exitCode).isEqualTo(ExitCode.COMPILATION_ERROR)
+                expectThat(compilation.messages)
+                    .contains("Error processing com.michaelom.strikt.generator.kapt.sources.PrivateClass: " +
+                        "@GenerateAssertions can't be applied to private classes")
             }
         }
 

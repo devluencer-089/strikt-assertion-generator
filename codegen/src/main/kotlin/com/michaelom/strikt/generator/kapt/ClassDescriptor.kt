@@ -15,7 +15,7 @@ class ClassDescriptor(
     val members: List<Member> by lazy {
         containerData.properties.asSequence()
             .filter { (property) -> property.isVal || property.isVar }
-            .filter { (property) -> !property.isPrivate && !property.isAbstract && !property.isConst }
+            .filter { (property) -> !property.isPrivate }
             .map { (property, data) -> Member(property, data) }
             .toList()
     }
