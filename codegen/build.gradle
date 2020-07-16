@@ -20,6 +20,10 @@ dependencies {
     testImplementation group: 'com.github.tschuchortdev', name: 'kotlin-compile-testing', version: compile_testing_version
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 //we copy all test source files into the resource directory in order to read the source code during testing
 task copyTestSources(type: Copy) {
     from 'src/test/kotlin/com/michaelom/strikt/generator/kapt/sources'
