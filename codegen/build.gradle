@@ -27,12 +27,15 @@ task copyTestSources(type: Copy) {
     into 'src/test/resources/sources'
 }
 
+processTestResources {
+    dependsOn 'copyTestSources'
+}
+
 clean {
     delete 'src/test/resources/sources'
 }
 
 test {
-    dependsOn 'copyTestSources'
     finalizedBy jacocoTestReport
 }
 
